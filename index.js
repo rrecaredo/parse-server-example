@@ -5,7 +5,7 @@ var express = require('express');
 var ParseServer = require('parse-server').ParseServer;
 var path = require('path');
 
-// var databaseUri = process.env.DATABASE_URL || process.env.MONGODB_URI;
+var databaseUri = process.env.DATABASE_URL || process.env.MONGODB_URI;
 
 var api = new ParseServer({
   databaseURI: databaseUri,
