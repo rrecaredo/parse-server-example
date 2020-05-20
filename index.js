@@ -8,7 +8,7 @@ var path = require('path');
 var databaseUri = process.env.DATABASE_URL || process.env.MONGODB_URI;
 
 var api = new ParseServer({
-  databaseURI: databaseUri,
+  databaseURI: 'postgres://dhbrnidk:Erm7d5BIfnTm1XETANjFxusXV6VRbVCU@salt.db.elephantsql.com:5432/dhbrnidk',
   appId: process.env.APP_ID || 'myAppId',
   masterKey: process.env.MASTER_KEY || '',
   serverURL: process.env.SERVER_URL || 'http://localhost:1337/parse',
