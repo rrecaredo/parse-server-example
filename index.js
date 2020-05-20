@@ -35,7 +35,9 @@ app.get("/save", async (req, res) => {
     gameScore.set("skills", ["pwnage", "flying"]);
 
     gameScore.save().then((gameScore) => {
-      console.log(gameScore);
+      console.log('----', gameScore);
+    }).catch(error => {
+      console.log('error: ', error)
     });
 
     res.status(200).json({ a: 1 });
