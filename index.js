@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
 `;
 
 try {
-  client.connect(process.env.DATABASE_URL);
+  client.connect();
   const res = await client.query(query);
   console.log('Table is successfully created');
 } catch (err) {
