@@ -7,6 +7,8 @@ var path = require('path');
 
 var databaseUri = process.env.DATABASE_URI || process.env.MONGODB_URI;
 
+console.log('------', databaseUri);
+
 var api = new ParseServer({
   databaseURI: databaseUri,
   appId: process.env.APP_ID || 'myAppId',
