@@ -9,7 +9,7 @@
         <script>
             $(document).ready(async () => {
                 Parse.initialize("myAppId");
-                Parse.serverURL = 'http://heroku-poc-8.herokuapp.com/parse';
+                Parse.serverURL = 'http://heroku-poc-11.herokuapp.com/parse';
 
                 let query = new Parse.Query('Posts');
                 let subscription = await query.subscribe();
