@@ -7,12 +7,8 @@ var path = require('path');
 
 var databaseUri = process.env.DATABASE_URI || process.env.MONGODB_URI;
 
-if (!databaseUri) {
-  console.log('DATABASE_URI not specified, falling back to localhost.');
-}
-
 var api = new ParseServer({
-  databaseURI: databaseUri || 'mongodb://chunder:Chunder123@ds139715.mlab.com:39715/ricardo-poc-3',
+  databaseURI: databaseUri,
   appId: process.env.APP_ID || 'myAppId',
   masterKey: process.env.MASTER_KEY || '',
   serverURL: process.env.SERVER_URL || 'http://localhost:1337/parse',
