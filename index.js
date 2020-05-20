@@ -17,7 +17,7 @@ var api = new ParseServer({
   masterKey: process.env.MASTER_KEY || '',
   serverURL: process.env.SERVER_URL || 'http://localhost:1337/parse',
   liveQuery: {
-    classNames: ["Posts", "Comments"]
+    classNames: ["Posts", "Comments", "GameScore"]
   }
 });
 
@@ -31,6 +31,10 @@ app.use(mountPath, api);
 // Parse Server plays nicely with the rest of your web routes
 app.get('/', function(req, res) {
   res.status(200).send('I dream of being a website.  Please star the parse-server repo on GitHub!');
+});
+
+app.get('/env', function(req, res) {
+  res.json({ env: process.env });
 });
 
 app.get('/test', function(req, res) {

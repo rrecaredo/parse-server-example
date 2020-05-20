@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Example</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/parse/2.10.0/parse.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    </head>
+    <body>
+        <script>
+            $(document).ready(async () => {
+                Parse.initialize("myAppId");
+                Parse.serverURL = 'http://heroku-poc-8.herokuapp.com/parse';
+
+                let query = new Parse.Query('Posts');
+                let subscription = await query.subscribe();
+
+                subscription.on('open', () => {
+                    console.log('subscription opened');
+                });
+
+                subscription.on('create', (object) => {
+                    console.log('object created', object);
+                });
+
+                subscription.on('update', (object) => {
+                    console.log('object updated');
+                  });
+
+                  subscription.on('enter', (object) => {
+                    console.log('object entered');
+                  });
+
+                  subscription.on('leave', (object) => {
+                    console.log('object left');
+                  });
+
+                  subscription.on('delete', (object) => {
+                    console.log('object deleted');
+                  });
+
+                  subscription.on('close', () => {
+                    console.log('subscription closed');
+                  });
+            });
+        </script>
+    </body>
+</html>
