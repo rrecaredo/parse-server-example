@@ -10,7 +10,7 @@ const client = new Client(process.env.DATABASE_URL);
 var databaseUri = process.env.DATABASE_URL || process.env.MONGODB_URI;
 
 client.connect((err) => {
-  if (err) return done(err)
+  if (err) console.log(err);
 
   let createTableQuery = `CREATE TABLE IF NOT EXISTS GameScore(_id bigint primary key, co2_field varchar(40) NOT NULL, temp_field int NOT NULL, quality_field decimal NOT NULL, reading_time_field timestamp NULL)`
 
