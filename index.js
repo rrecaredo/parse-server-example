@@ -27,7 +27,7 @@ var api = new ParseServer({
   // databaseURI: 'postgres://tiqzxunifdydmt:61de5a55184bbbcff3c21b7c064b2d3721187ba9db91e33c42f336e20904ac64@ec2-18-210-214-86.compute-1.amazonaws.com:5432/dad3jj7odbpt6b',
   // databaseURI: 'postgres://postgres:12345@localhost:5432/rrecaredo',
   // databaseURI: 'mongodb://chunder:Chunder123@ds139715.mlab.com:39715/ricardo-poc-3',
-  databaseURI,
+  databaseURI: databaseUri,
   appId: process.env.APP_ID || 'myAppId',
   masterKey: process.env.MASTER_KEY || '',
   serverURL: process.env.SERVER_URL || 'http://localhost:1337/parse',
