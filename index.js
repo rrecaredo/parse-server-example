@@ -4,11 +4,30 @@
 var express = require('express');
 var ParseServer = require('parse-server').ParseServer;
 var path = require('path');
+const { Client } = require('pg')
+const client = new Client(process.env.DATABASE_URL);
 
 var databaseUri = process.env.DATABASE_URL || process.env.MONGODB_URI;
 
+client.connect((err) => {
+  if (err) return done(err)
+
+  let createTableQuery = `CREATE TABLE IF NOT EXISTS GameScore(_id bigint primary key, co2_field varchar(40) NOT NULL, temp_field int NOT NULL, quality_field decimal NOT NULL, reading_time_field timestamp NULL)`
+
+  client.query(createTableQuery, err => {
+    if(err)
+      throw err;
+    else {
+        console.log('Success!') ;
+    }
+  });
+});
+
 var api = new ParseServer({
-  databaseURI: 'postgres://dhbrnidk:Erm7d5BIfnTm1XETANjFxusXV6VRbVCU@salt.db.elephantsql.com:5432/dhbrnidk',
+  // databaseURI: 'postgres://tiqzxunifdydmt:61de5a55184bbbcff3c21b7c064b2d3721187ba9db91e33c42f336e20904ac64@ec2-18-210-214-86.compute-1.amazonaws.com:5432/dad3jj7odbpt6b',
+  // databaseURI: 'postgres://postgres:12345@localhost:5432/rrecaredo',
+  // databaseURI: 'mongodb://chunder:Chunder123@ds139715.mlab.com:39715/ricardo-poc-3',
+  databaseURI,
   appId: process.env.APP_ID || 'myAppId',
   masterKey: process.env.MASTER_KEY || '',
   serverURL: process.env.SERVER_URL || 'http://localhost:1337/parse',
@@ -30,7 +49,7 @@ app.get("/save", async (req, res) => {
     var gameScore = new GameScore();
 
     gameScore.set("score", 1337);
-    gameScore.set("playerName", "Sean Plott 12345");
+    gameScore.set("playerName", "Ricardo");
     gameScore.set("cheatMode", false);
     gameScore.set("skills", ["pwnage", "flying"]);
 
