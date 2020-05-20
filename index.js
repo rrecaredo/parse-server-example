@@ -5,7 +5,7 @@ var express = require('express');
 var ParseServer = require('parse-server').ParseServer;
 var path = require('path');
 
-var databaseUri = process.env.DATABASE_URL || process.env.MONGODB_URI;
+// var databaseUri = process.env.DATABASE_URL || process.env.MONGODB_URI;
 
 var api = new ParseServer({
   databaseURI: databaseUri,
@@ -23,6 +23,27 @@ app.use('/public', express.static(path.join(__dirname, '/public')));
 
 var mountPath = process.env.PARSE_MOUNT || '/parse';
 app.use(mountPath, api);
+
+app.get("/save", async (req, res) => {
+  try {
+    var GameScore = Parse.Object.extend("GameScore");
+    var gameScore = new GameScore();
+
+    gameScore.set("score", 1337);
+    gameScore.set("playerName", "Sean Plott 12345");
+    gameScore.set("cheatMode", false);
+    gameScore.set("skills", ["pwnage", "flying"]);
+
+    gameScore.save().then((gameScore) => {
+      console.log(gameScore);
+    });
+
+    res.status(200).json({ a: 1 });
+
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
 
 // Parse Server plays nicely with the rest of your web routes
 app.get('/', function(req, res) {
