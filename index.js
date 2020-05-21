@@ -1,7 +1,9 @@
 // Example express application adding the parse-server module to expose Parse
 // compatible API routes.
 
-const express = require('express');
+const feathers = require('@feathersjs/feathers');
+const express = require('@feathersjs/express');
+
 const path = require('path');
 // const { Client } = require('pg')
 // const client = new Client(process.env.DATABASE_URL);
@@ -13,6 +15,7 @@ console.log('Server URL', process.env.SERVER_URL);
 
 const { Sequelize, Model, DataTypes } = require('sequelize');
 const sequelize = new Sequelize(databaseUri, { dialect: 'postgres' });
+const service = require('feathers-sequelize');
 
 class Something extends Model {};
 
@@ -30,33 +33,29 @@ sequelize.sync()
     console.log(jane.toJSON());
   });
 
-// (async () => {
-// const createTableQuery = `
-// CREATE TABLE IF NOT EXISTS users (
-//     email varchar,
-//     firstName varchar,
-//     lastName varchar,
-//     age int
-// );
-// `;
+const app = express(feathers());
 
-// const insertQuery = `INSERT INTO users(email, firstName, lastName, age) VALUES('mary@ann.com', 'Mary Ann', 'Wilters', 20)`;
+app.use('something', service({ Model: Something }));
 
-// try {
-//   client.connect();
-//   await client.query(createTableQuery);
-//   await client.query(insertQuery);
-//   console.log('All OK');
-// } catch (err) {
-//   console.log('Table is not created');
-//   console.log(err.stack);
-// } finally {
-//   client.end();
-// }
-// })();
+app.service('something').on('created', message => {
+  console.log('A new message has been created', message);
+});
 
+const main = async () => {
+  // Create a new message on our message service
+  await app.service('something').create({
+    username: 'aaa',
+    birthday: new Date(1980, 6, 20)
+  });
 
-const app = express();
+  // Find all existing messages
+  const messages = await app.service('something').find();
+
+  console.log('All messages', messages);
+};
+
+main();
+
 
 app.use('/public', express.static(path.join(__dirname, '/public')));
 
