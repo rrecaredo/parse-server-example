@@ -63,7 +63,8 @@ app.get('/csomething', async (req, res) => {
   res.json({ ok: true })
 });
 
-app.listen(3030).on('listening', () =>
+var port = process.env.PORT || 1337;
+app.listen(port).on('listening', () =>
   console.log('Feathers server listening on localhost:3030')
 );
 
