@@ -2,15 +2,33 @@
 // compatible API routes.
 
 const express = require('express');
-const ParseServer = require('parse-server').ParseServer;
 const path = require('path');
 // const { Client } = require('pg')
 // const client = new Client(process.env.DATABASE_URL);
 
-var databaseUri = process.env.DATABASE_URL || process.env.MONGODB_URI;
+const databaseUri = process.env.DATABASE_URL || 'postgres://postgres:12345@localhost:5432/rrecaredo';
 
 console.log('Database URL', databaseUri);
 console.log('Server URL', process.env.SERVER_URL);
+
+const { Sequelize, Model, DataTypes } = require('sequelize');
+const sequelize = new Sequelize(databaseUri, { dialect: 'postgres' });
+
+class Something extends Model {};
+
+Something.init({
+  username: DataTypes.STRING,
+  birthday: DataTypes.DATE
+}, { sequelize, modelName: 'something' });
+
+sequelize.sync()
+  .then(() => Something.create({
+    username: 'janedoe',
+    birthday: new Date(1980, 6, 20)
+  }))
+  .then(jane => {
+    console.log(jane.toJSON());
+  });
 
 // (async () => {
 // const createTableQuery = `
@@ -37,48 +55,10 @@ console.log('Server URL', process.env.SERVER_URL);
 // }
 // })();
 
-const api = new ParseServer({
-  // databaseURI: 'postgres://tiqzxunifdydmt:61de5a55184bbbcff3c21b7c064b2d3721187ba9db91e33c42f336e20904ac64@ec2-18-210-214-86.compute-1.amazonaws.com:5432/dad3jj7odbpt6b',
-  // databaseURI: 'postgres://postgres:12345@localhost:5432/rrecaredo',
-  // databaseURI: 'mongodb://chunder:Chunder123@ds139715.mlab.com:39715/ricardo-poc-3',
-  databaseURI: databaseUri || 'postgres://postgres:12345@localhost:5432/rrecaredo',
-  appId: process.env.APP_ID || 'myAppId',
-  masterKey: process.env.MASTER_KEY || '',
-  serverURL: process.env.SERVER_URL || 'http://localhost:1337/parse',
-  liveQuery: {
-    classNames: ["Posts", "Comments", "GameScore", "Hello"]
-  }
-});
 
 const app = express();
 
 app.use('/public', express.static(path.join(__dirname, '/public')));
-
-var mountPath = process.env.PARSE_MOUNT || '/parse';
-app.use(mountPath, api);
-
-app.get("/save", async (req, res) => {
-  try {
-    try {
-      var GameScore = Parse.Object.extend("Hello");
-      var gameScore = new GameScore();
-      gameScore.set("score", 1337);
-      gameScore.set("playerName", "Ricardo");
-      gameScore.set("cheatMode", false);
-      gameScore.set("skills", ["pwnage", "flying"]);
-
-      const gs = await gameScore.save();
-      console.log('---------', gs);
-    } catch (error) {
-      console.log('Saving Error: ', error)
-    }
-
-    res.status(200).json({ a: 1 });
-
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
 
 // Parse Server plays nicely with the rest of your web routes
 app.get('/', function (req, res) {
@@ -97,8 +77,5 @@ var port = process.env.PORT || 1337;
 var httpServer = require('http').createServer(app);
 
 httpServer.listen(port, function () {
-  console.log('parse-server-example running on port ' + port + '.');
+  console.log('example running on port ' + port + '.');
 });
-
-// This will enable the Live Query real-time server
-ParseServer.createLiveQueryServer(httpServer);
