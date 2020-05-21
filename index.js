@@ -10,7 +10,7 @@ const client = new Client(process.env.DATABASE_URL);
 var databaseUri = process.env.DATABASE_URL || process.env.MONGODB_URI;
 
 (async () => {
-const query = `
+const createTableQuery = `
 CREATE TABLE IF NOT EXISTS users (
     email varchar,
     firstName varchar,
@@ -19,10 +19,13 @@ CREATE TABLE IF NOT EXISTS users (
 );
 `;
 
+const insertQuery = `INSERT INTO users(email, firstName, lastName, age) VALUES('mary@ann.com', 'Mary Ann', 'Wilters', 20)`;
+
 try {
   client.connect();
-  const res = await client.query(query);
-  console.log('Table is successfully created');
+  await client.query(createTableQuery);
+  await client.query(insertQuery);
+  console.log('All OK');
 } catch (err) {
   console.log('Table is not created');
   console.log(err.stack);
