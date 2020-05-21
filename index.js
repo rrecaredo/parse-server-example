@@ -54,7 +54,13 @@ const main = async () => {
   console.log('All messages', messages);
 };
 
-main();
+(async () => {
+  try {
+    await main();
+  } catch (error) {
+    console.log('oh no error', error)
+  }
+})();
 
 
 app.use('/public', express.static(path.join(__dirname, '/public')));
