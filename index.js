@@ -41,27 +41,24 @@ app.service('something').on('created', message => {
   console.log('A new message has been created', message);
 });
 
-const main = async () => {
-  // Create a new message on our message service
-  await app.service('something').create({
-    username: 'aaa',
-    birthday: new Date(1980, 6, 20)
-  });
-
-  // Find all existing messages
-  const messages = await app.service('something').find();
-
-  console.log('All messages', messages);
-};
-
-(async () => {
+app.get('/csomething', async (req, res) => {
   try {
-    await main();
-  } catch (error) {
-    console.log('oh no error', error)
-  }
-})();
 
+    await app.service('something').create({
+      username: 'ccc',
+      birthday: new Date(1980, 6, 20)
+    });
+
+    // Find all existing messages
+    const messages = await app.service('something').find();
+
+    console.log('All messages', messages);
+  } catch (error) {
+    console.log('error noooo', error)
+  }
+
+  res.json({ ok: true })
+});
 
 app.use('/public', express.static(path.join(__dirname, '/public')));
 
