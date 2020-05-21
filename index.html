@@ -1,47 +1,51 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Example</title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/parse/2.10.0/parse.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
-    </head>
-    <body>
-        <script>
-            $(document).ready(async () => {
-                Parse.initialize("myAppId");
-                Parse.serverURL = 'http://heroku-poc-11.herokuapp.com/parse';
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Feathers Example</title>
+<link rel="stylesheet" href="https://unpkg.com/feathers-chat@4.0.0/public/base.css">
+    <link rel="stylesheet" href="https://unpkg.com/feathers-chat@4.0.0/public/chat.css">
+</head>
+<body>
+  <main id="main" class="container">
+    <h1>Welcome to Feathers</h1>
+    <form class="form" onsubmit="sendMessage(event.preventDefault())">
+      <input type="text" id="message-text" placeholder="Enter message here">
+      <button type="submit" class="button button-primary">Send message</button>
+    </form>
 
-                let query = new Parse.Query('Posts');
-                let subscription = await query.subscribe();
+    <h2>Here are the current messages:</h2>
+  </main>
 
-                subscription.on('open', () => {
-                    console.log('subscription opened');
-                });
+  <script src="https://unpkg.com/@feathersjs/client@^4.3.0/dist/feathers.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <script type="text/javascript">
+    const socket = io('http://localhost:3030');
+    const app = feathers();
+    app.configure(feathers.socketio(socket));
 
-                subscription.on('create', (object) => {
-                    console.log('object created', object);
-                });
+    async function sendMessage () {
+      const messageInput = document.getElementById('message-text');
 
-                subscription.on('update', (object) => {
-                    console.log('object updated');
-                  });
+      await app.service('something').create({
+        username: 'ddd',
+        birthday: new Date(1980, 6, 20)
+      });
 
-                  subscription.on('enter', (object) => {
-                    console.log('object entered');
-                  });
+      messageInput.value = '';
+    }
 
-                  subscription.on('leave', (object) => {
-                    console.log('object left');
-                  });
+    function addMessage (message) {
+      document.getElementById('main').innerHTML += `<p>${JSON.stringify(message)}</p>`;
+    }
 
-                  subscription.on('delete', (object) => {
-                    console.log('object deleted');
-                  });
+    const main = async () => {
+      const messages = await app.service('something').find();
+      messages.forEach(addMessage);
+      app.service('something').on('created', addMessage);
+    };
 
-                  subscription.on('close', () => {
-                    console.log('subscription closed');
-                  });
-            });
-        </script>
-    </body>
+    main();
+  </script>
+</body>
 </html>

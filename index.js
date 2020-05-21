@@ -1,12 +1,6 @@
-// Example express application adding the parse-server module to expose Parse
-// compatible API routes.
-
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
-
-const path = require('path');
-// const { Client } = require('pg')
-// const client = new Client(process.env.DATABASE_URL);
+const socketio = require('@feathersjs/socketio');
 
 const databaseUri = process.env.DATABASE_URL || 'postgres://postgres:12345@localhost:5432/rrecaredo';
 
@@ -35,11 +29,20 @@ sequelize.sync()
 
 const app = express(feathers());
 
-app.use('something', service({ Model: Something }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
+app.configure(express.rest());
+app.configure(socketio());
 
-app.service('something').on('created', message => {
-  console.log('A new message has been created', message);
-});
+app.use('/something', service({ Model: Something }));
+app.use(express.errorHandler());
+
+app.on('connection', connection =>
+  app.channel('everybody').join(connection)
+);
+
+app.publish(data => app.channel('everybody'));
 
 app.get('/csomething', async (req, res) => {
   try {
@@ -60,24 +63,10 @@ app.get('/csomething', async (req, res) => {
   res.json({ ok: true })
 });
 
-app.use('/public', express.static(path.join(__dirname, '/public')));
+app.listen(3030).on('listening', () =>
+  console.log('Feathers server listening on localhost:3030')
+);
 
-// Parse Server plays nicely with the rest of your web routes
-app.get('/', function (req, res) {
-  res.status(200).send('I dream of being a website.  Please star the parse-server repo on GitHub!');
-});
-
-app.get('/env', function (req, res) {
-  res.json({ env: process.env });
-});
-
-app.get('/test', function(req, res) {
-  res.sendFile(path.join(__dirname, '/public/test.html'));
-});
-
-var port = process.env.PORT || 1337;
-var httpServer = require('http').createServer(app);
-
-httpServer.listen(port, function () {
-  console.log('example running on port ' + port + '.');
+app.service('something').create({
+  text: 'Hello world from the server'
 });
