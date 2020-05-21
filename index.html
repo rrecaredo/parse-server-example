@@ -20,7 +20,7 @@
   <script src="https://unpkg.com/@feathersjs/client@^4.3.0/dist/feathers.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script type="text/javascript">
-    const socket = io('http://localhost:3030');
+    const socket = io('https://heroku-poc-11.herokuapp.com');
     const app = feathers();
     app.configure(feathers.socketio(socket));
 
